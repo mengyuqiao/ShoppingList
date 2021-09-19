@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ShoppingList</string>
+    <string name="decrease_str">-</string>
+    <string name="increase_str">+</string>
 </resources>

@@ -1,19 +1,25 @@
 package com.example.shoppinglist;
 
+import static com.example.shoppinglist.R.drawable.*;
+
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
-    private List<Product> productList = new ArrayList<>();
+    private final List<Product> productList;
     private final Context context;
+    private int flag = 1;
 
     public ProductAdapter(List<Product> productList, Context context) {
         this.productList = productList;
@@ -29,7 +35,43 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        holder.textView.setText(productList.get(position).getName());
+        // use a temporary product to save the Product instance thus position won't get to the next value
+        Product product = productList.get(position);
+        holder.nameView.setText(product.getName());
+        String price = "$" + String.valueOf(product.getPrice());
+        holder.priceView.setText(price);
+        holder.numView.setText(String.valueOf(product.getNum()));
+
+        switch (flag) {
+            case 0:
+                holder.productImage.setImageResource(avatar1);
+            case 1:
+                holder.productImage.setImageResource(avatar2);
+            case 2:
+                holder.productImage.setImageResource(avatar3);
+            case 3:
+                holder.productImage.setImageResource(avatar4);
+            case 4:
+                holder.productImage.setImageResource(avatar5);
+            case 5:
+                holder.productImage.setImageResource(avatar6);
+            default:
+                holder.productImage.setImageResource(avatar1);
+        }
+        flag = (flag+1)%6;
+
+        // in some cases, it will prevent unwanted situations
+        holder.selectedCheckBox.setOnCheckedChangeListener(null);
+        // set checkbox
+        holder.selectedCheckBox.setChecked(product.isSelected());
+
+        holder.selectedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                product.setSelected(b);
+                System.out.println(product.isSelected());
+            }
+        });
     }
 
     @Override
@@ -38,13 +80,21 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {
-        private TextView textView;
+        private final TextView nameView;
+        private final TextView priceView;
+        private final TextView numView;
+        private final CheckBox selectedCheckBox;
+        private final ImageView productImage;
 
         public ProductViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.item_textview);
+            nameView = itemView.findViewById(R.id.name_textview);
+            priceView = itemView.findViewById(R.id.price_textview);
+            numView = itemView.findViewById(R.id.num_textview);
+            selectedCheckBox = itemView.findViewById(R.id.item_cb);
+            productImage = itemView.findViewById(R.id.product_image);
 
-            textView.setOnClickListener(new View.OnClickListener() {
+            nameView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (onRecyclerItemClickListener != null){
