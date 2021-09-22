@@ -2,4 +2,10 @@
     <string name="app_name">ShoppingList</string>
     <string name="decrease_str">-</string>
     <string name="increase_str">+</string>
+    <string name="add_new_item">AddNewItem</string>
+    <string name="select_all_cb">All</string>
+    <string name="add_new_item_name">Add new Item</string>
+    <string name="new_product_name">New Product Name</string>
+    <string name="price">Price</string>
+    <string name="add">Add</string>
 </resources>
