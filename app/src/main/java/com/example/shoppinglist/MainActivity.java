@@ -6,14 +6,20 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // bind components
+        EditText inputEditText = findViewById(R.id.input_tv);
+        MaterialButton button = findViewById(R.id.add_btn);
 
         // generate initial products
         for (int i = 0; i < 10; i++) {
@@ -44,8 +54,7 @@ public class MainActivity extends AppCompatActivity {
         ProductAdapter productAdapter = new ProductAdapter(productList, this);
         recyclerView.setAdapter(productAdapter);
 
-        //creating a method to create item touch helper method for adding swipe to delete functionality.
-        //we are specifying drag direction and position to right
+        // create ItemTouchHelper to add swiping to delete
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN|ItemTouchHelper.START|ItemTouchHelper.END, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -58,26 +67,62 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                // this method is called when swipe our item to right direction.
-                // get the item at a particular position.
                 Product delete_product = productList.get(viewHolder.getAdapterPosition());
                 int end = viewHolder.getAdapterPosition();
-                //remove item from our array list.
                 productList.remove(end);
-                //notify our item is removed from adapter
                 productAdapter.notifyItemRemoved(end);
-                Snackbar.make(recyclerView, delete_product.getName(), Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                Snackbar.make(recyclerView, delete_product.getName() + " Removed", Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //add on click listener to our action of snack bar.
-                        // add our item to array list with a position.
                         productList.add(end, delete_product);
-                        //notify item is added to our adapter class.
                         productAdapter.notifyItemInserted(end);
                     }
                 }).show();
             }
-            //add this to our recycler view.
         }).attachToRecyclerView(recyclerView);
+
+        // use add_btn and input_tv to add a new product
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String product_name = String.valueOf(inputEditText.getText()).trim();
+                if ("".equals(product_name)){
+                    Toast.makeText(getApplicationContext(),"Null Product Name", Integer.parseInt("10")).show();
+                }
+                else {
+                    productList.add(0, new Product(product_name));
+                    productAdapter.notifyItemInserted(0);
+                    Snackbar.make(recyclerView, product_name + " Added", Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            productList.remove(0);
+                            productAdapter.notifyItemRemoved(0);
+                        }
+                    }).show();
+                }
+            }
+        });
+
+        // when user press enter in edittext, just add the product
+        inputEditText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == KeyEvent.KEYCODE_ENTER)){
+                    button.callOnClick();
+                    inputEditText.setText("");
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        inputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b){
+
+                }
+            }
+        });
     }
 }

@@ -45,6 +45,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         holder.nameView.setText(product.getName());
         holder.numView.setText(String.valueOf(product.getNum()));
 
+        // Give each product a random picture
         Random random = new Random();
         int flag = random.nextInt(7);
         switch (flag) {
@@ -108,8 +109,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             decreaseNumBtn = itemView.findViewById(R.id.decrease_num_btn);
             increaseNumBtn = itemView.findViewById(R.id.increase_num_btn);
         }
-
-
     }
 
     private OnRecyclerItemClickListener onRecyclerItemClickListener;
