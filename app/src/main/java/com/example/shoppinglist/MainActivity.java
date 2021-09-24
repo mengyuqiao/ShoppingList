@@ -2,13 +2,19 @@ package com.example.shoppinglist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -26,8 +32,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SendToEmailDialogFragment.NoticeDialogListener {
     private List<Product> productList = new ArrayList<>();
+    private final String email = "ymeng15@binghamton.edu";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         // bind components
         EditText inputEditText = findViewById(R.id.input_tv);
         MaterialButton button = findViewById(R.id.add_btn);
+        Button email_btn = findViewById(R.id.email_btn);
 
         // generate initial products
         for (int i = 0; i < 10; i++) {
@@ -104,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // when user press enter in edittext, just add the product
+        // this method will get different results on AVD and Real phone
         inputEditText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
@@ -116,13 +125,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        inputEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        // send list to email by pressing email button
+        email_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View view, boolean b) {
-                if (!b){
-
-                }
+            public void onClick(View view) {
+                SendToEmailDialogFragment sendToEmailDialogFragment = new SendToEmailDialogFragment();
+                sendToEmailDialogFragment.show(getSupportFragmentManager(), "emailConfirm");
             }
         });
+
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL, email);
+        i.putExtra(Intent.EXTRA_SUBJECT, "ShoppingList");
+        String list_str = "";
+        for (int j = 0; j < productList.size(); j++) {
+            list_str += productList.get(j).toString();
+        }
+        i.putExtra(Intent.EXTRA_TEXT, list_str);
+        try {
+            startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(getApplicationContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
+        Toast.makeText(getApplicationContext(), "Confirm", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        Toast.makeText(getApplicationContext(), "Cancel", Toast.LENGTH_LONG).show();
     }
 }

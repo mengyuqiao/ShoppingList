@@ -8,4 +8,8 @@
     <string name="new_product_name">New Product Name</string>
     <string name="price">Price</string>
     <string name="add">Add</string>
+    <string name="email">Email</string>
+    <string name="send_to_email">Send to Email</string>
+    <string name="email_com">email.com</string>
+    <string name="confirm_email_str">Send the list by email?</string>
 </resources>

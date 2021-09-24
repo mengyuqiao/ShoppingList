@@ -31,4 +31,9 @@ public class Product {
     public void setNum(int num) {
         this.num = num;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%-30s %10s\n",name, num);
+    }
 }
