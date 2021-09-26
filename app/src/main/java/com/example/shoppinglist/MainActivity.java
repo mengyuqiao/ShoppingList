@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements SendToEmailDialog
                 int end = viewHolder.getAdapterPosition();
                 productList.remove(end);
                 productAdapter.notifyItemRemoved(end);
-                Snackbar.make(recyclerView, delete_product.getName() + " Removed", Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                Snackbar.make(recyclerView, delete_product.getName() + " Removed", Snackbar.LENGTH_LONG).setAction("Recall", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         productList.add(end, delete_product);
@@ -98,9 +98,10 @@ public class MainActivity extends AppCompatActivity implements SendToEmailDialog
                     Toast.makeText(getApplicationContext(),"Null Product Name", Integer.parseInt("10")).show();
                 }
                 else {
+                    inputEditText.setText("");
                     productList.add(0, new Product(product_name));
                     productAdapter.notifyItemInserted(0);
-                    Snackbar.make(recyclerView, product_name + " Added", Snackbar.LENGTH_LONG).setAction("Undo", new View.OnClickListener() {
+                    Snackbar.make(recyclerView, product_name + " Added", Snackbar.LENGTH_LONG).setAction("Recall", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             productList.remove(0);
@@ -136,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements SendToEmailDialog
 
     }
 
+    // send list by email
     @Override
     public void onDialogPositiveClick(DialogFragment dialog) {
         Intent i = new Intent(Intent.ACTION_SEND);
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements SendToEmailDialog
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(getApplicationContext(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(getApplicationContext(), "Confirm", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Succeed", Toast.LENGTH_LONG).show();
     }
 
     @Override

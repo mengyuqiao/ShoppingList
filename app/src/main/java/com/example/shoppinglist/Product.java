@@ -1,9 +1,5 @@
 package com.example.shoppinglist;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 public class Product {
     private String name;
     private int num;
@@ -34,6 +30,6 @@ public class Product {
 
     @Override
     public String toString() {
-        return String.format("%-30s %10s\n",name, num);
+        return String.format("%-40s %20s\n",name, num);
     }
 }
